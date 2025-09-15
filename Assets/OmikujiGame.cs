@@ -8,8 +8,8 @@ public class OmikujiGame : MonoBehaviour
     [Header("UI Elements")]
     public TMP_Text shrineNameText;
     public TMP_Text scoreText;
-    public Transform shopPanel;       // 右上ショップ
-    public Transform inventoryPanel;  // 下側手持ちアイテム
+    public Transform shopPanel;       
+    public Transform inventoryPanel;  
     public GameObject itemButtonPrefab;
     public Image omikujiBox;
     public TMP_Text omikujiResultText;
@@ -22,15 +22,19 @@ public class OmikujiGame : MonoBehaviour
     public int score = 100;
 
     [Header("Items")]
-    public List<ItemData> allItems; // Inspectorで仮アイテムを登録
+    public List<ItemData> allItems; 
     private List<ItemData> shopItems = new List<ItemData>();
     private List<ItemData> inventoryItems = new List<ItemData>();
 
-    private int omikujiCount = 0; // 1神社4回
+    private int omikujiCount = 0;
 
-    // 効果用
-    private int nextOmikujiBonus = 0;
+    // 効果フラグ
+    private int nextOmikujiBonus = 0; 
     private bool nextOmikujiBless = false;
+    private bool nextOmikujiSuzu = false;
+    private bool nextOmikujiDaruma = false;
+    private bool nextOmikujiDouble = false;
+    private bool nextOmikujiTriple = false;
 
     void Start()
     {
@@ -49,7 +53,7 @@ public class OmikujiGame : MonoBehaviour
         nextShineButton.gameObject.SetActive(false);
 
         shopItems.Clear();
-        shopItems.Add(allItems[currentShineIndex]); // 固定お守り
+        shopItems.Add(allItems[currentShineIndex]); 
         shopItems.Add(GetRandomItem());
         shopItems.Add(GetRandomItem());
         SpawnShopItems();
@@ -83,7 +87,6 @@ public class OmikujiGame : MonoBehaviour
         score -= item.cost;
         inventoryItems.Add(item);
 
-        // ショップのボタンを削除
         foreach (Transform child in shopPanel)
         {
             Image img = child.GetComponent<Image>();
@@ -120,13 +123,15 @@ public class OmikujiGame : MonoBehaviour
 
     void UseItem(ItemData item)
     {
-        if(item.itemName == "豪運")
+        switch(item.itemName)
         {
-            nextOmikujiBonus = 90; // 次のくじで大吉+45%
-        }
-        else if(item.itemName == "至福")
-        {
-            nextOmikujiBless = true; // 次の凶・大凶をプラスに
+            case "豪運": nextOmikujiBonus = 45; break; // 次の大吉+45%
+            case "至福": nextOmikujiBless = true; break; // 次の凶・大凶をプラス
+            case "四つ葉": score += 20; break; // 即座に運気+20
+            case "勝負運": nextOmikujiDouble = true; break; // 次のくじスコア2倍
+            case "福返し": nextOmikujiTriple = true; break; // 大吉のときスコア3倍
+            case "だるま": nextOmikujiDaruma = true; break; // 吉確率アップ
+            case "鈴": nextOmikujiSuzu = true; break; // 吉＋小吉確率アップ
         }
 
         inventoryItems.Remove(item);
@@ -143,20 +148,41 @@ public class OmikujiGame : MonoBehaviour
 
         int rand = Random.Range(0, 100);
         int scoreChange = 0;
-
         string resultText = "";
-        if(rand < 5 + nextOmikujiBonus){ resultText="大吉！"; scoreChange=50; }
-        else if(rand < 20){ resultText="吉"; scoreChange=30; }
-        else if(rand < 50){ resultText="小吉"; scoreChange=10; }
-        else if(rand < 80){ resultText="凶"; scoreChange=-20; if(nextOmikujiBless) scoreChange=20; }
-        else{ resultText="大凶"; scoreChange=-40; if(nextOmikujiBless) scoreChange=40; }
+
+        // 鈴・だるまなど確率アップ
+        if(nextOmikujiSuzu) 
+        {
+            if(rand < 75) { resultText = "小吉"; scoreChange = 10; }
+            else { resultText = "吉"; scoreChange = 30; }
+        }
+        else if(nextOmikujiDaruma) 
+        {
+            resultText = "吉"; scoreChange = 30;
+        }
+        else // 通常
+        {
+            if(rand < 5 + nextOmikujiBonus){ resultText="大吉"; scoreChange=50; }
+            else if(rand < 20){ resultText="吉"; scoreChange=30; }
+            else if(rand < 50){ resultText="小吉"; scoreChange=10; }
+            else if(rand < 80){ resultText="凶"; scoreChange=-20; if(nextOmikujiBless) scoreChange=20; }
+            else{ resultText="大凶"; scoreChange=-40; if(nextOmikujiBless) scoreChange=40; }
+        }
+
+        // スコア倍率
+        if(nextOmikujiDouble) scoreChange *= 2;
+        if(nextOmikujiTriple && resultText=="大吉") scoreChange *= 3;
 
         score += scoreChange;
         omikujiResultText.text = resultText + " (" + (scoreChange>=0?"+":"") + scoreChange + ")";
 
-        // 効果リセット
+        // 効果リセット（1回のみ）
         nextOmikujiBonus = 0;
         nextOmikujiBless = false;
+        nextOmikujiSuzu = false;
+        nextOmikujiDaruma = false;
+        nextOmikujiDouble = false;
+        nextOmikujiTriple = false;
 
         UpdateUI();
 

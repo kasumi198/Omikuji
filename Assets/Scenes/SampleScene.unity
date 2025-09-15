@@ -464,31 +464,31 @@ MonoBehaviour:
   - itemName: "\u8C6A\u904B"
     icon: {fileID: -7689145275393633256, guid: f656ed1531efbb041aaae3be0fba252b, type: 3}
     description: "\u5927\u5409\u304C\u51FA\u3084\u3059\u304F\u306A\u308B"
-    cost: 30
+    cost: 20
   - itemName: "\u81F3\u798F"
     icon: {fileID: -2182778758085582076, guid: df30d23541a12a540958c7e2b28b6ce0, type: 3}
     description: "\u51F6\u3084\u5927\u51F6\u3092\u30D7\u30E9\u30B9\u306B\u5909\u3048\u308B"
-    cost: 40
+    cost: 20
   - itemName: "\u52DD\u8CA0\u904B"
     icon: {fileID: -6702682645178009188, guid: 9e79faadac6c96e47a417c77e22be196, type: 3}
-    description: "\u5C0F\u5409\u30FB\u5409\u306E\u5F97\u70B9\u304C\u500D\u306B\u306A\u308B"
-    cost: 35
+    description: "\u5F97\u70B9\u304C\u500D\u306B\u306A\u308B"
+    cost: 20
   - itemName: "\u798F\u8FD4\u3057"
     icon: {fileID: -6563900927033684719, guid: c26f349b7a7ba964e841057c3623f2e3, type: 3}
-    description: "\u51F6\u3084\u5927\u51F6\u3092\u30D7\u30E9\u30B9\u306B\u5909\u3048\u308B"
-    cost: 50
+    description: "\u5927\u5409\u306E\u3068\u304D3\u500D"
+    cost: 20
   - itemName: "\u56DB\u3064\u8449"
     icon: {fileID: -6437086326148405248, guid: d9aeda13beb4d5c499cdfc7fa2ba86cc, type: 3}
-    description: "\u5C0F\u3055\u306A\u904B\u6C17\u30A2\u30C3\u30D7"
-    cost: 15
+    description: "\u904B\u6C17\u30A2\u30C3\u30D7"
+    cost: 0
   - itemName: "\u3060\u308B\u307E"
     icon: {fileID: -8211538987477836921, guid: f7d7879de586a084382c59ee821ac19b, type: 3}
-    description: "\u30B3\u30B9\u30C8\u30D1\u30D5\u30A9\u30FC\u30DE\u30F3\u30B9\u304C\u9AD8\u3044"
-    cost: 20
+    description: "\u4E2D\u5409\u304C\u51FA\u3084\u3059\u3044"
+    cost: 0
   - itemName: "\u9234"
     icon: {fileID: 3616512531535755360, guid: dbc46814a74320a4c8c37457f99dc850, type: 3}
-    description: "\u5C0F\u3055\u306A\u904B\u6C17\u30A2\u30C3\u30D7"
-    cost: 10
+    description: "\u5409\u3068\u5C0F\u5409\u304C\u51FA\u3084\u3059\u304F\u306A\u308B"
+    cost: 0
 --- !u!224 &680458353
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1050,7 +1050,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 4.25, y: -132.02998}
+  m_AnchoredPosition: {x: 4.25, y: -132.02997}
   m_SizeDelta: {x: -385.2, y: -264.06}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1216993440
@@ -1814,6 +1814,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1190295708186463907, guid: f0a6bf74575a05a43abb63b1f6201694, type: 3}
+      propertyPath: m_Text
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 3514010529558081707, guid: f0a6bf74575a05a43abb63b1f6201694, type: 3}
       propertyPath: m_Name
       value: itemButton
