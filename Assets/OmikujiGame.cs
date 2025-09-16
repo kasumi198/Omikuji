@@ -17,7 +17,7 @@ public class OmikujiGame : MonoBehaviour
     public Button nextShineButton;
 
     [Header("Data")]
-    public List<string> shrineNames = new List<string>{"金沢","尾山","石浦","白山"};
+    public List<string> shrineNames = new List<string>{"金沢神社","尾山神社","石浦神社","白山神社"};
     private int currentShineIndex = 0;
     public int score = 100;
 
@@ -70,9 +70,14 @@ public class OmikujiGame : MonoBehaviour
         {
             ItemData item = shopItems[i];
             GameObject btnObj = Instantiate(itemButtonPrefab, shopPanel);
+
+            // アイコン設定
             btnObj.GetComponent<Image>().sprite = item.icon;
+
+            // 購入ボタン機能
             btnObj.GetComponent<Button>().onClick.AddListener(() => BuyItem(item));
 
+            // 配置
             RectTransform rt = btnObj.GetComponent<RectTransform>();
             rt.anchoredPosition = new Vector2(fixedPositions[i], 0);
         }
@@ -156,16 +161,39 @@ public class OmikujiGame : MonoBehaviour
         Animator anim = omikujiBox.GetComponent<Animator>();
         if(anim != null) anim.SetTrigger("Shake");
 
-        int rand = Random.Range(0, 100);
-        int scoreChange = 0;
-        string resultText = "";
+    float rand = Random.Range(0f, 100f);
+    int scoreChange = 0;
+    string resultText = "";
 
-        // 基本確率
-        float probDaikichi = 5 + nextOmikujiBonusBig;
-        float probKichi = 15 + nextOmikujiBonusKichi;
-        float probShoukichi = 30;
-        float probKyoo = 30;
-        float probDaikyo = 20 - nextOmikujiDownDaikyo;
+    // 基本値
+    float baseDaikichi = 5;
+    float baseKichi = 15;
+    float baseShoukichi = 30;
+    float baseKyoo = 30;
+    float baseDaikyo = 20;
+
+    // 豪運・だるま・鈴の効果
+    float daikichiAdd = nextOmikujiBonusBig; // 豪運
+    float kichiAdd = nextOmikujiBonusKichi; // だるま
+    float daikyoDown = nextOmikujiDownDaikyo; // 鈴
+
+    // 豪運・だるま・鈴の効果を反映
+    float probDaikichi = baseDaikichi + daikichiAdd;
+    float probKichi = baseKichi + kichiAdd;
+    float probDaikyo = baseDaikyo - daikyoDown;
+
+    // 残りを小吉・凶に分配
+    float remain = 100f - probDaikichi - probKichi - probDaikyo;
+    float baseSum = baseShoukichi + baseKyoo;
+    float probShoukichi = remain * (baseShoukichi / baseSum);
+    float probKyoo = remain * (baseKyoo / baseSum);
+
+    // 0未満にならないように
+    probDaikichi = Mathf.Max(0, probDaikichi);
+    probKichi = Mathf.Max(0, probKichi);
+    probShoukichi = Mathf.Max(0, probShoukichi);
+    probKyoo = Mathf.Max(0, probKyoo);
+    probDaikyo = Mathf.Max(0, probDaikyo);
 
         // 累積判定
         if(rand < probDaikichi){ resultText="大吉！"; scoreChange=50; }
