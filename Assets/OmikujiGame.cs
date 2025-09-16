@@ -16,6 +16,10 @@ public class OmikujiGame : MonoBehaviour
     public Button drawButton;
     public Button nextShineButton;
 
+    [Header("Background")]
+    public Sprite[] backgrounds; // 背景画像をInspectorでセット
+    public Image backgroundImage; // 背景表示用ImageをInspectorでセット
+
     [Header("Data")]
     public List<string> shrineNames = new List<string>{"金沢神社","尾山神社","石浦神社","白山神社"};
     private int currentShineIndex = 0;
@@ -50,6 +54,14 @@ public class OmikujiGame : MonoBehaviour
         omikujiCount = 0;
         omikujiResultText.text = "";
         nextShineButton.gameObject.SetActive(false);
+
+        // 背景切り替え（神社ごと）
+        if (backgrounds != null && backgrounds.Length > 0 && backgroundImage != null)
+        {
+            int bgIndex = currentShineIndex;
+            bgIndex = Mathf.Clamp(bgIndex, 0, backgrounds.Length - 1);
+            backgroundImage.sprite = backgrounds[bgIndex];
+        }
 
         shopItems.Clear();
         shopItems.Add(allItems[currentShineIndex]);
