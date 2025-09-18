@@ -252,7 +252,7 @@ public class OmikujiGame : MonoBehaviour
     // 結果画面へ遷移する処理
     public void GoToResult()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("ResultScene");
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Result");
     }
     
 
