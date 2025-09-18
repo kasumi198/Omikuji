@@ -15,6 +15,7 @@ public class OmikujiGame : MonoBehaviour
     public TMP_Text omikujiResultText;
     public Button drawButton;
     public Button nextShineButton;
+    public Button resultButton; // 結果画面へ遷移するボタン
 
     [Header("Background")]
     public Sprite[] backgrounds; // 背景画像をInspectorでセット
@@ -41,11 +42,13 @@ public class OmikujiGame : MonoBehaviour
 
     void Start()
     {
-        nextShineButton.gameObject.SetActive(false);
-        SetupShine();
-        UpdateUI();
-        drawButton.onClick.AddListener(DrawOmikuji);
-        nextShineButton.onClick.AddListener(NextShine);
+    nextShineButton.gameObject.SetActive(false);
+    if(resultButton != null) resultButton.gameObject.SetActive(false);
+    SetupShine();
+    UpdateUI();
+    drawButton.onClick.AddListener(DrawOmikuji);
+    nextShineButton.onClick.AddListener(NextShine);
+    if(resultButton != null) resultButton.onClick.AddListener(GoToResult);
     }
 
     void SetupShine()
@@ -238,11 +241,20 @@ public class OmikujiGame : MonoBehaviour
         {
             omikujiResultText.text = "最終スコア:" + score;
             nextShineButton.gameObject.SetActive(false);
+            if(resultButton != null) resultButton.gameObject.SetActive(true); // 結果ボタン表示
+            PlayerPrefs.SetInt("finalScore", score); // スコア保存
             return;
         }
         SetupShine();
         UpdateUI();
     }
+
+    // 結果画面へ遷移する処理
+    public void GoToResult()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("ResultScene");
+    }
+    
 
     ItemData GetRandomItem()
     {
