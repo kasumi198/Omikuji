@@ -79,7 +79,7 @@ public class OmikujiGame : MonoBehaviour
 
         if(shopItems.Count == 0) return;
 
-        float[] fixedPositions = new float[] { -75f, 0f, 75f };
+        float[] fixedPositions = new float[] { -250f, 0f, 250f };
 
         for (int i = 0; i < shopItems.Count && i < fixedPositions.Length; i++)
         {
@@ -210,8 +210,13 @@ public class OmikujiGame : MonoBehaviour
     probKyoo = Mathf.Max(0, probKyoo);
     probDaikyo = Mathf.Max(0, probDaikyo);
 
+
         // 累積判定
-        if(rand < probDaikichi){ resultText="大吉！"; scoreChange=50; }
+        if(rand < probDaikichi){
+            resultText="大吉！";
+            scoreChange=50;
+            scoreChange *= 3; // 大吉の時は三倍
+        }
         else if(rand < probDaikichi + probKichi){ resultText="吉"; scoreChange=30; }
         else if(rand < probDaikichi + probKichi + probShoukichi){ resultText="小吉"; scoreChange=10; }
         else if(rand < probDaikichi + probKichi + probShoukichi + probKyoo){ resultText="凶"; scoreChange=-20; if(nextOmikujiBless) scoreChange=20; }
