@@ -24,7 +24,7 @@ public class HelpManager : MonoBehaviour
         });
     }
 
-    // 「？」ボタン
+    // やり方ボタン
     public void ShowHelp()
     {
         helpText.text = helpMessage;

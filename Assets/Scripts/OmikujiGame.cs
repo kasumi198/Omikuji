@@ -39,6 +39,7 @@ public class OmikujiGame : MonoBehaviour
     private int nextOmikujiDownDaikyo = 0;  // 大凶ダウン
     private bool nextOmikujiBless = false;  // 凶・大凶をプラス
     private bool nextOmikujiDouble = false; // 勝負運2倍
+    private bool nextOmikujiTriple = false; // 福返し3倍
 
     void Start()
     {
@@ -162,6 +163,9 @@ public class OmikujiGame : MonoBehaviour
             case "勝負運":
                 nextOmikujiDouble = true; // スコア2倍
                 break;
+            case "福返し":
+                nextOmikujiTriple = true; // スコア3倍
+                break;
         }
 
         inventoryItems.Remove(item);
@@ -212,10 +216,11 @@ public class OmikujiGame : MonoBehaviour
 
 
         // 累積判定
+        bool isDaikichi = false;
         if(rand < probDaikichi){
             resultText="大吉！";
             scoreChange=50;
-            scoreChange *= 3; // 大吉の時は三倍
+            isDaikichi = true;
         }
         else if(rand < probDaikichi + probKichi){ resultText="吉"; scoreChange=30; }
         else if(rand < probDaikichi + probKichi + probShoukichi){ resultText="小吉"; scoreChange=10; }
@@ -223,6 +228,7 @@ public class OmikujiGame : MonoBehaviour
         else{ resultText="大凶"; scoreChange=-40; if(nextOmikujiBless) scoreChange=40; }
 
         if(nextOmikujiDouble) scoreChange *= 2;
+        if(nextOmikujiTriple && isDaikichi) scoreChange *= 3; // 大吉の時のみ3倍
 
         score += scoreChange;
         omikujiResultText.text = resultText + " (" + (scoreChange>=0?"+":"") + scoreChange + ")";
@@ -233,6 +239,7 @@ public class OmikujiGame : MonoBehaviour
         nextOmikujiDownDaikyo = 0;
         nextOmikujiBless = false;
         nextOmikujiDouble = false;
+        nextOmikujiTriple = false;
 
         UpdateUI();
 
@@ -247,11 +254,36 @@ public class OmikujiGame : MonoBehaviour
             omikujiResultText.text = "最終スコア:" + score;
             nextShineButton.gameObject.SetActive(false);
             if(resultButton != null) resultButton.gameObject.SetActive(true); // 結果ボタン表示
-            PlayerPrefs.SetInt("finalScore", score); // スコア保存
+            SaveGameResult(); // 結果データを保存
             return;
         }
         SetupShine();
         UpdateUI();
+    }
+
+    // ゲーム結果を保存する処理
+    void SaveGameResult()
+    {
+        PlayerPrefs.SetInt("finalScore", score);
+        PlayerPrefs.SetString("visitedShrines", string.Join(",", shrineNames));
+        PlayerPrefs.SetInt("totalShrines", shrineNames.Count);
+        
+        // 評価を決定
+        string evaluation = GetScoreEvaluation(score);
+        PlayerPrefs.SetString("scoreEvaluation", evaluation);
+        
+        PlayerPrefs.Save();
+    }
+    
+    // スコアによる評価を決定
+    string GetScoreEvaluation(int finalScore)
+    {
+        if(finalScore >= 300) return "超絶運気！";
+        else if(finalScore >= 200) return "大吉運気！";
+        else if(finalScore >= 150) return "吉運気！";
+        else if(finalScore >= 100) return "普通運気";
+        else if(finalScore >= 50) return "小吉運気";
+        else return "凶運気...";
     }
 
     // 結果画面へ遷移する処理
